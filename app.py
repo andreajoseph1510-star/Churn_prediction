@@ -90,157 +90,124 @@ with col2:
 
 
 tab1, tab2 = st.tabs(["🔍 Predict", "📊 Insights"])
-st.sidebar.header("🧾 Enter Customer Details")
-
-gender         = st.sidebar.selectbox("Gender", ["Male", "Female"])
-senior         = st.sidebar.selectbox("Senior Citizen", ["No", "Yes"])
-partner        = st.sidebar.selectbox("Has Partner", ["Yes", "No"])
-dependents     = st.sidebar.selectbox("Has Dependents", ["Yes", "No"])
-tenure         = st.sidebar.slider("Tenure (months)", 1, 72, 12)
-phone          = st.sidebar.selectbox("Phone Service", ["Yes", "No"])
-multiple_lines = st.sidebar.selectbox("Multiple Lines", ["Yes", "No", "No phone service"])
-internet       = st.sidebar.selectbox("Internet Service", ["DSL", "Fiber optic", "No"])
-online_sec     = st.sidebar.selectbox("Online Security", ["Yes", "No", "No internet service"])
-online_backup  = st.sidebar.selectbox("Online Backup", ["Yes", "No", "No internet service"])
-device_prot    = st.sidebar.selectbox("Device Protection", ["Yes", "No", "No internet service"])
-tech_support   = st.sidebar.selectbox("Tech Support", ["Yes", "No", "No internet service"])
-streaming_tv   = st.sidebar.selectbox("Streaming TV", ["Yes", "No", "No internet service"])
-streaming_mov  = st.sidebar.selectbox("Streaming Movies", ["Yes", "No", "No internet service"])
-contract       = st.sidebar.selectbox("Contract", ["Month-to-month", "One year", "Two year"])
-paperless      = st.sidebar.selectbox("Paperless Billing", ["Yes", "No"])
-payment        = st.sidebar.selectbox("Payment Method", [
-    "Electronic check", "Mailed check",
-    "Bank transfer (automatic)", "Credit card (automatic)"
-])
-monthly        = st.sidebar.number_input("Monthly Charges ($)", 18.0, 120.0, 65.0)
-total          = st.sidebar.number_input("Total Charges ($)", 18.0, 9000.0, 1500.0)
 
 # ── Predict Button ────────────────────────────────────────────
 with tab1:
-    if st.sidebar.button("🔮 Predict Churn", use_container_width=True):
+    
+    # ── Centered form ─────────────────────────────────────────
+    col_left, col_center, col_right = st.columns([1, 2, 1])
 
+    with col_center:
+        st.subheader("🧾 Enter Customer Details")
+        st.markdown("---")
+
+        gender         = st.selectbox("Gender", ["Male", "Female"])
+        senior         = st.selectbox("Senior Citizen", ["No", "Yes"])
+        partner        = st.selectbox("Has Partner", ["Yes", "No"])
+        dependents     = st.selectbox("Has Dependents", ["Yes", "No"])
+        tenure         = st.slider("Tenure (months)", 1, 72, 12)
+        phone          = st.selectbox("Phone Service", ["Yes", "No"])
+        multiple_lines = st.selectbox("Multiple Lines", ["Yes", "No", "No phone service"])
+        internet       = st.selectbox("Internet Service", ["DSL", "Fiber optic", "No"])
+        online_sec     = st.selectbox("Online Security", ["Yes", "No", "No internet service"])
+        online_backup  = st.selectbox("Online Backup", ["Yes", "No", "No internet service"])
+        device_prot    = st.selectbox("Device Protection", ["Yes", "No", "No internet service"])
+        tech_support   = st.selectbox("Tech Support", ["Yes", "No", "No internet service"])
+        streaming_tv   = st.selectbox("Streaming TV", ["Yes", "No", "No internet service"])
+        streaming_mov  = st.selectbox("Streaming Movies", ["Yes", "No", "No internet service"])
+        contract       = st.selectbox("Contract", ["Month-to-month", "One year", "Two year"])
+        paperless      = st.selectbox("Paperless Billing", ["Yes", "No"])
+        payment        = st.selectbox("Payment Method", [
+            "Electronic check", "Mailed check",
+            "Bank transfer (automatic)", "Credit card (automatic)"
+        ])
+
+        col1, col2 = st.columns(2)
+        with col1:
+            monthly = st.number_input("Monthly Charges ($)", 18.0, 120.0, 65.0)
+        with col2:
+            total   = st.number_input("Total Charges ($)", 18.0, 9000.0, 1500.0)
+
+        st.markdown("---")
+        predict_btn = st.button("🔍 Predict Churn", use_container_width=True)
+
+    # ── Results appear below centered ─────────────────────────
+    if predict_btn:
         input_dict = {
-        "gender": gender,
-        "SeniorCitizen": 1 if senior == "Yes" else 0,
-        "Partner": partner,
-        "Dependents": dependents,
-        "tenure": tenure,
-        "PhoneService": phone,
-        "MultipleLines": multiple_lines,
-        "InternetService": internet,
-        "OnlineSecurity": online_sec,
-        "OnlineBackup": online_backup,
-        "DeviceProtection": device_prot,
-        "TechSupport": tech_support,
-        "StreamingTV": streaming_tv,
-        "StreamingMovies": streaming_mov,
-        "Contract": contract,
-        "PaperlessBilling": paperless,
-        "PaymentMethod": payment,
-        "MonthlyCharges": monthly,
-        "TotalCharges": total
+            "gender": gender,
+            "SeniorCitizen": 1 if senior == "Yes" else 0,
+            "Partner": partner,
+            "Dependents": dependents,
+            "tenure": tenure,
+            "PhoneService": phone,
+            "MultipleLines": multiple_lines,
+            "InternetService": internet,
+            "OnlineSecurity": online_sec,
+            "OnlineBackup": online_backup,
+            "DeviceProtection": device_prot,
+            "TechSupport": tech_support,
+            "StreamingTV": streaming_tv,
+            "StreamingMovies": streaming_mov,
+            "Contract": contract,
+            "PaperlessBilling": paperless,
+            "PaymentMethod": payment,
+            "MonthlyCharges": monthly,
+            "TotalCharges": total
         }
 
-        # Encode categoricals
+        # Encode
         input_df = pd.DataFrame([input_dict])
         for col in cat_cols:
             if col in input_df.columns:
                 le = le_dict[col]
                 input_df[col] = le.transform(input_df[col])
 
-        # Reorder columns
-        input_df = input_df[feat_names]
-
-        # Scale
+        input_df    = input_df[feat_names]
         input_scaled = scaler.transform(input_df)
 
-        # Predict
         prob = model.predict_proba(input_scaled)[0][1]
         pred = model.predict(input_scaled)[0]
 
-        # Risk Badge
-        col1, col2, col3 = st.columns(3)
+        st.divider()
 
+        # ── Risk Badge ────────────────────────────────────────
+        col1, col2, col3 = st.columns(3)
         with col1:
             st.metric("Churn Probability", f"{prob*100:.1f}%")
-
         with col2:
             if prob >= 0.70:
                 st.error("🔴 HIGH RISK — Likely to Churn")
             elif prob >= 0.40:
                 st.warning("🟡 MEDIUM RISK — Monitor Closely")
             else:
-                st.success("🟢 LOW RISK — Most Likely to Stay")
-
+                st.success("🟢 LOW RISK — Likely to Stay")
         with col3:
             st.metric("Prediction", "Will Churn" if pred == 1 else "Will Stay")
 
         st.divider()
 
-        # ── SHAP Explanation ──────────────────────────────────────
-        # st.subheader(" Why did the model predict this?")
-        # st.caption("The factors which  pushed the prediction up (red) or down (blue)")
-        # fig, ax = plt.subplots(figsize=(10, 4))
-
-        # # Set background color
-        # fig.patch.set_facecolor("#170740")   # whole figure
-        # ax.set_facecolor("#06d4d4f6")          # plot area
-
-        # explainer   = shap.TreeExplainer(model)
-        # shap_values = explainer.shap_values(input_scaled)
-
-        # fig, ax = plt.subplots(figsize=(10, 4))
-
-        # fig.patch.set_facecolor("#020f17")
-        # ax.set_facecolor("#13dbd7")
-
-        # shap.waterfall_plot(
-        #     shap.Explanation(
-        #         values=shap_values[0],  # or shap_values[0][0] if error persists
-        #         base_values=explainer.expected_value,
-        #         data=input_df.values[0],
-        #         feature_names=feat_names
-        #     ),
-        #     show=False
-        # )
-        import matplotlib.pyplot as plt
-        import shap
-
-        # 🌙 Set global dark theme (THIS is the key fix)
-        plt.rcParams.update({
-            'text.color': 'white',
-            'axes.labelcolor': 'white',
-            'xtick.color': 'white',
-            'ytick.color': 'white'
-        })
-
-        # ── Feature Impact Chart ───────────────────────────────────
+        # ── Feature Impact Chart ───────────────────────────────
         st.subheader("🔍 Why did the model predict this?")
 
-        explainer   = shap.TreeExplainer(model)
-        shap_values = explainer.shap_values(input_scaled)
+        explainer    = shap.TreeExplainer(model)
+        shap_values  = explainer.shap_values(input_scaled)
 
-        # Build impact dataframe
         impact_df = pd.DataFrame({
             "Feature": feat_names,
             "Impact": shap_values[0]
         }).sort_values("Impact", ascending=True)
 
-        # Label as churn reason or staying reason
         impact_df["Reason"] = impact_df["Impact"].apply(
             lambda x: "🔴 Pushes Towards Churn" if x > 0 else "🟢 Keeps Customer"
         )
         impact_df["Color"] = impact_df["Impact"].apply(
             lambda x: "#ff4757" if x > 0 else "#2ecc71"
         )
-
-        # Only show top 5 most impactful features
         impact_df = pd.concat([
-            impact_df.tail(5),   # top 5 staying reasons
-            impact_df.head(5)    # top 5 churn reasons
+            impact_df.tail(5),
+            impact_df.head(5)
         ]).drop_duplicates()
 
-        # Plot
         import plotly.graph_objects as go
         fig = go.Figure(go.Bar(
             x=impact_df["Impact"],
@@ -263,7 +230,7 @@ with tab1:
         )
         st.plotly_chart(fig, use_container_width=True)
 
-
+        # ── Plain English Summary ──────────────────────────────
         st.subheader("📋 Summary")
         churn_reasons = impact_df[impact_df["Impact"] > 0].sort_values("Impact", ascending=False).head(3)
         stay_reasons  = impact_df[impact_df["Impact"] < 0].sort_values("Impact").head(3)
@@ -273,34 +240,35 @@ with tab1:
             st.markdown("**🔴 Top Churn Reasons:**")
             for _, row in churn_reasons.iterrows():
                 st.markdown(f"- {row['Feature']}")
-
         with col2:
             st.markdown("**🟢 Top Staying Reasons:**")
             for _, row in stay_reasons.iterrows():
                 st.markdown(f"- {row['Feature']}")
-        st.divider()
-        st.subheader("💡 Retention Suggestions")
 
+        st.divider()
+
+        # ── Retention Suggestions ─────────────────────────────
+        st.subheader("💡 Retention Suggestions")
         if prob >= 0.70:
-                st.markdown("""
-                - 📞 Call the customer personally — offer a loyalty discount
-                - 📋 Propose upgrading to a **One Year or Two Year contract**
-                - 🎁 Offer a free month or service bundle upgrade
-                """)
+            st.markdown("""
+            - 📞 Call the customer personally — offer a loyalty discount
+            - 📋 Propose upgrading to a **One Year or Two Year contract**
+            - 🎁 Offer a free month or service bundle upgrade
+            """)
         elif prob >= 0.40:
-                st.markdown("""
-                - 📧 Send a satisfaction survey and follow up
-                - 💰 Offer a small discount on monthly charges
-                - 🔧 Check if they have any unresolved support issues
-                """)
+            st.markdown("""
+            - 📧 Send a satisfaction survey and follow up
+            - 💰 Offer a small discount on monthly charges
+            - 🔧 Check if they have any unresolved support issues
+            """)
         else:
-                st.markdown("""
-                - ✅ Customer is stable — maintain regular engagement
-                - 🎯 Good candidate for upselling premium services
-                """)
+            st.markdown("""
+            - ✅ Customer is stable — maintain regular engagement
+            - 🎯 Good candidate for upselling premium services
+            """)
 
     else:
-        st.info("👈 Fill in the customer details on the left and click **Predict Churn**")
+        st.info("👆 Fill in the customer details above and click **Predict Churn**")
 with tab2:
     import plotly.express as px
     import plotly.graph_objects as go
@@ -352,7 +320,7 @@ with tab2:
         )
         st.plotly_chart(fig2, use_container_width=True)
 
-    # ── Row 2: Two charts side by side ────────────────────────
+   
     col3, col4 = st.columns(2)
 
     with col3:
