@@ -4,7 +4,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+client = anthropic.Anthropic(
+    api_key=os.getenv("ANTHROPIC_API_KEY")
+)
 
 def get_retention_advice(customer_data: dict, churn_prob: float, user_question: str = None) -> str:
 
