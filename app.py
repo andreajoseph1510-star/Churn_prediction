@@ -5,6 +5,22 @@ import pickle
 import shap
 import matplotlib.pyplot as plt
 from shap.plots._waterfall import waterfall_legacy
+from login import show_login_page
+
+
+if "user" not in st.session_state:
+    show_login_page()
+    st.stop()
+else:
+    pass
+
+
+col1, col2 = st.columns([6, 1])
+with col2:
+    if st.button("Logout"):
+        del st.session_state["user"]
+        del st.session_state["email"]
+        st.rerun()
 
 #  Page configuration
 st.set_page_config(
@@ -13,9 +29,19 @@ st.set_page_config(
     layout="wide"
 )
 st.markdown("""
+
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
 .stApp {
     background-color: black;
+}
+/* Hide Press Enter to apply - all methods */
+[data-testid="InputInstructions"],
+.st-emotion-cache-1rsyhoq,
+small {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
 }
 
 
@@ -27,12 +53,13 @@ html, body, [class*="css"] {
 
 h1 {
     color: #818cf8;
-    font-family: 'Space Mono', monospace;
+    font-family: 'Audiowide', sans-serif !important;
+    letter-spacing: 2px;
 }
 
 
 p {
-    color: #a0a3c4;
+    color: #22d3ee;
 }
 
 
@@ -89,7 +116,7 @@ with col2:
     )
 
 
-tab1, tab2 = st.tabs(["🔍 Predict", "📊 Insights"])
+tab1, tab2, tab3 = st.tabs(["🔍 Predict", "📊 Insights", "🤖 AI Assistant"])
 
 # ── Predict Button ────────────────────────────────────────────
 with tab1:
@@ -168,7 +195,13 @@ with tab1:
         prob = model.predict_proba(input_scaled)[0][1]
         pred = model.predict(input_scaled)[0]
 
+        
+
+        # ← Add these two lines
+        st.session_state["last_customer"] = input_dict
+        st.session_state["last_prob"] = prob
         st.divider()
+        
 
         # ── Risk Badge ────────────────────────────────────────
         col1, col2, col3 = st.columns(3)
@@ -415,3 +448,42 @@ with tab2:
             title_font_color="#818cf8"
         )
         st.plotly_chart(fig7, use_container_width=True)
+with tab3:
+    
+    from recommender import get_retention_advice
+
+    st.subheader("🤖 AI Retention Advisor")
+    st.markdown("Get personalized retention strategies powered by Claude AI")
+    st.divider()
+
+    if "prob" not in dir() and "input_dict" not in st.session_state:
+        st.info("👆 First go to the **Predict tab**, enter customer details and click Predict — then come back here for AI advice!")
+    else:
+        # Show stored customer data
+        if "last_customer" in st.session_state and "last_prob" in st.session_state:
+            customer = st.session_state["last_customer"]
+            prob     = st.session_state["last_prob"]
+
+            st.markdown(f"**Current customer churn probability: `{prob*100:.1f}%`**")
+            st.divider()
+
+            # Auto advice
+            if st.button("🎯 Get AI Retention Advice", use_container_width=True):
+                with st.spinner("Thinking..."):
+                    advice = get_retention_advice(customer, prob)
+                    st.markdown(advice)
+
+            st.divider()
+
+            # Chat
+            st.markdown("#### 💬 Ask a specific question")
+            question = st.text_input("e.g. Should I offer a discount or upgrade?")
+            if st.button("Ask AI", use_container_width=True):
+                if question:
+                    with st.spinner("Thinking..."):
+                        answer = get_retention_advice(customer, prob, question)
+                        st.markdown(answer)
+                else:
+                    st.warning("Please type a question first!")
+        else:
+            st.info("👆 First go to the **Predict tab**, enter customer details and click Predict — then come back here!")
