@@ -6,6 +6,24 @@ import shap
 import matplotlib.pyplot as plt
 from shap.plots._waterfall import waterfall_legacy
 from login import show_login_page
+st.set_page_config(
+    page_title="SenseChurn",
+    page_icon="📡",
+    layout="wide"
+)
+st.markdown("""
+<style>
+
+/* FORCE style for Logout button (last button in top row) */
+div[data-testid="stHorizontalBlock"] div button {
+    color: white !important;
+}
+
+
+
+</style>
+""", unsafe_allow_html=True)
+
 
 
 if "user" not in st.session_state:
@@ -14,20 +32,94 @@ if "user" not in st.session_state:
 else:
     pass
 
+#  Initialize FIRST (very important)
+if "show_help" not in st.session_state:
+    st.session_state.show_help = False
+if "show_feedback" not in st.session_state:
+    st.session_state.show_feedback = False
 
-col1, col2 = st.columns([6, 1])
-with col2:
-    if st.button("Logout"):
-        del st.session_state["user"]
-        del st.session_state["email"]
-        st.rerun()
+# Session state (add once at top if not present)
+if "show_help" not in st.session_state:
+    st.session_state.show_help = False
 
-#  Page configuration
-st.set_page_config(
-    page_title="SenseChurn",
-    page_icon="📡",
-    layout="wide"
-)
+if "show_feedback" not in st.session_state:
+    st.session_state.show_feedback = False
+
+top_bar = st.container()
+
+with top_bar:
+    col_title, col_space, col_help, col_feedback, col_logout = st.columns([6, 4, 1, 1, 1])
+
+    with col_title:
+        st.markdown("")
+
+    with col_help:
+        st.button("❓", key="help_btn")
+
+    with col_feedback:
+        st.button("💬", key="feedback_btn")
+
+    with col_logout:
+        st.button("Logout", key="logout_btn")
+
+st.markdown("""
+<style>
+/* Target ONLY the last container (Logout area) */
+div[data-testid="column"]:last-child button {
+    background-color: #00008B !important;
+    color: white !important;
+    font-weight: bold !important;
+    border-radius: 8px !important;
+}
+
+
+
+
+/* Hover */
+div[data-testid="stHorizontalBlock"] button[kind="secondary"]:hover {
+    box-shadow: 0 0 10px #8E2DE2, 0 0 20px #4A00E0;
+    transform: scale(1.05);
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+
+
+
+
+# Help popup
+if st.session_state.show_help:
+    st.info("""
+    📘 Help Guide
+
+    - Enter customer details  
+    - View churn probability  
+    - Ask AI questions  
+
+    💡 Example: "How to reduce churn?"
+    """)
+# Feedback popup
+if st.session_state.show_feedback:
+    st.markdown("### 💬 Feedback")
+
+    feedback = st.text_area("Write your feedback")
+
+    if st.button("Submit Feedback"):
+        if feedback.strip():
+            with open("feedback.txt", "a") as f:
+                f.write(feedback + "\n---\n")
+            st.success("✅ Thank you!")
+        else:
+            st.warning("⚠️ Enter feedback")
+
+    if st.button("Close"):
+        st.session_state.show_feedback = False
+
+
+
+
+
 st.markdown("""
 
 <style>
@@ -73,13 +165,7 @@ section[data-testid="stSidebar"] label {
 }
 
 
-.stButton > button {
-    background-color: #4f46e5;
-    color: white;
-    border-radius: 8px;
-    border: none;
-    font-weight: bold;
-}
+
 .stButton > button:hover {
     background-color: #818cf8;
     color: black;
@@ -449,41 +535,45 @@ with tab2:
         )
         st.plotly_chart(fig7, use_container_width=True)
 with tab3:
-    
     from recommender import get_retention_advice
 
     st.subheader("🤖 AI Retention Advisor")
-    st.markdown("Get personalized retention strategies powered by Claude AI")
+    st.markdown("Get personalized retention strategies powered by AI")
     st.divider()
 
-    if "prob" not in dir() and "input_dict" not in st.session_state:
-        st.info("👆 First go to the **Predict tab**, enter customer details and click Predict — then come back here for AI advice!")
-    else:
-        # Show stored customer data
-        if "last_customer" in st.session_state and "last_prob" in st.session_state:
-            customer = st.session_state["last_customer"]
-            prob     = st.session_state["last_prob"]
+    if "last_customer" in st.session_state and "last_prob" in st.session_state:
+        customer = st.session_state["last_customer"]
+        prob     = st.session_state["last_prob"]
 
-            st.markdown(f"**Current customer churn probability: `{prob*100:.1f}%`**")
-            st.divider()
+        st.markdown(f"**Current customer churn probability: `{prob*100:.1f}%`**")
+        st.divider()
 
-            # Auto advice
-            if st.button("🎯 Get AI Retention Advice", use_container_width=True):
+        # ── Auto advice ───────────────────────────────────────
+        if st.button("🎯 Get AI Retention Advice", use_container_width=True):
+            with st.spinner("Thinking..."):
+                advice = get_retention_advice(customer, prob)
+                st.session_state["ai_advice"] = advice  # ← save to session
+
+        if "ai_advice" in st.session_state:
+            st.markdown(st.session_state["ai_advice"])
+
+        st.divider()
+
+        # ── Chat ──────────────────────────────────────────────
+        st.markdown("#### 💬 Ask a specific question")
+        question = st.text_input("e.g. Should I offer a discount or upgrade?",
+                                  key="ai_question")
+
+        if st.button("Ask AI", use_container_width=True, key="ask_btn"):
+            if question:
                 with st.spinner("Thinking..."):
-                    advice = get_retention_advice(customer, prob)
-                    st.markdown(advice)
+                    answer = get_retention_advice(customer, prob, question)
+                    st.session_state["ai_answer"] = answer  # ← save to session
+            else:
+                st.warning("Please type a question first!")
 
-            st.divider()
+        if "ai_answer" in st.session_state:
+            st.markdown(st.session_state["ai_answer"])
 
-            # Chat
-            st.markdown("#### 💬 Ask a specific question")
-            question = st.text_input("e.g. Should I offer a discount or upgrade?")
-            if st.button("Ask AI", use_container_width=True):
-                if question:
-                    with st.spinner("Thinking..."):
-                        answer = get_retention_advice(customer, prob, question)
-                        st.markdown(answer)
-                else:
-                    st.warning("Please type a question first!")
-        else:
-            st.info("👆 First go to the **Predict tab**, enter customer details and click Predict — then come back here!")
+    else:
+        st.info("👆 First go to the **Predict tab**, enter customer details and click Predict — then come back here!")

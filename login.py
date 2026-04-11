@@ -28,7 +28,7 @@ small {
 """, unsafe_allow_html=True)
 
 def show_login_page():
-    st.markdown("<h1 style='white-space: nowrap; font-size: 2.5rem;'>👋 Welcome to SenseChurn</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='white-space: nowrap; font-size: 2.5rem;'> Welcome to SenseChurn</h1>", unsafe_allow_html=True)
     st.markdown("Please login or create an account to continue")
     st.divider()
 
