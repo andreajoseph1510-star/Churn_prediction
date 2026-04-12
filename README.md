@@ -43,7 +43,7 @@ How to run:
 ##  How to Run the Project Locally
 
 ###  Clone the repository
-git clone https://github.com/your-username/SenseChurn.git
+git clone https://github.com/andreajoseph1510-star/Churn_prediction.git
 cd SenseChurn
 
 ###  Install dependencies
