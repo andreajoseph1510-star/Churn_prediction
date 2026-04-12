@@ -44,7 +44,7 @@ How to run:
 
 ###  Clone the repository
 git clone https://github.com/andreajoseph1510-star/Churn_prediction.git
-cd Churn prediction app
+cd Churn_prediction_app
 
 ###  Install dependencies
 pip install -r requirements.txt
@@ -55,10 +55,24 @@ streamlit run app.py
 Project Preview:
 <img width="1883" height="831" alt="Screenshot 2026-04-12 112655" src="https://github.com/user-attachments/assets/da94a305-4b8b-439c-a14f-29174c4ec48b" />
 login page <img width="1894" height="835" alt="Screenshot 2026-04-12 114934" src="https://github.com/user-attachments/assets/48c41f45-74c4-4876-8d65-a12e3087a53d" />
-Prediction result <img width="1781" height="836" alt="Screenshot 2026-04-12 122230" src="https://github.com/user-attachments/assets/35381ce6-12db-460a-b6b5-344d5815160c" />
-AI assistance <img width="1889" height="831" alt="Screenshot 2026-04-12 122355" src="https://github.com/user-attachments/assets/d2836fb9-56a4-4ea7-adc0-b20ef68a467a" />
-Insights dashboard <img width="1851" height="805" alt="Screenshot 2026-04-12 122619" src="https://github.com/user-attachments/assets/3c5dcfb9-ff4b-4f9d-83d8-e9216e53a0c5" />
+Prediction result
+<img width="1781" height="836" alt="Screenshot 2026-04-12 122230" src="https://github.com/user-attachments/assets/35381ce6-12db-460a-b6b5-344d5815160c" />
 
+AI assistance
+<img width="1889" height="831" alt="Screenshot 2026-04-12 122355" src="https://github.com/user-attachments/assets/d2836fb9-56a4-4ea7-adc0-b20ef68a467a" />
+<img width="1765" height="739" alt="Screenshot 2026-04-12 145139" src="https://github.com/user-attachments/assets/712dc0dc-35b1-416e-8188-907956af0ea3" />
+<img width="1783" height="605" alt="Screenshot 2026-04-12 145232" src="https://github.com/user-attachments/assets/b5559956-1881-403c-bf66-ae95ccf05553" />
+
+Insights dashboard 
+<img width="1851" height="805" alt="Screenshot 2026-04-12 122619" src="https://github.com/user-attachments/assets/3c5dcfb9-ff4b-4f9d-83d8-e9216e53a0c5" />
+<img width="1894" height="842" alt="Screenshot 2026-04-12 144938" src="https://github.com/user-attachments/assets/00fa5d8c-8f8c-4825-b77d-390b35ec63b5" />
+<img width="1791" height="767" alt="Screenshot 2026-04-12 145014" src="https://github.com/user-attachments/assets/34124f80-db17-4832-9275-ae8c108b6660" />
+
+Get help
+<img width="1814" height="424" alt="Screenshot 2026-04-12 145301" src="https://github.com/user-attachments/assets/0e0eb42b-7439-4665-b2c2-576bf48befde" />
+
+Feedback
+<img width="1826" height="468" alt="Screenshot 2026-04-12 145338" src="https://github.com/user-attachments/assets/574ccf31-f89a-4a84-87b4-85bb425d8ee0" />
 
 
 Future Improvements:
@@ -68,7 +82,7 @@ Add real-time customer data integration
 Deploy on cloud (AWS / Render / Streamlit Cloud)
 Expand AI assistant capabilities
 
-Author
+Author:
 
 Andrea Maria Joseph
 LinkedIn: [My profile](https://www.linkedin.com/in/andrea-maria-joseph-0a5b6439a/?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base%3BDp45EjgjTxC7VExZsP4M1w%3D%3D)
