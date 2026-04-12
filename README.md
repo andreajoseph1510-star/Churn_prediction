@@ -44,7 +44,7 @@ How to run:
 
 ###  Clone the repository
 git clone https://github.com/andreajoseph1510-star/Churn_prediction.git
-cd SenseChurn
+cd Churn prediction app
 
 ###  Install dependencies
 pip install -r requirements.txt
