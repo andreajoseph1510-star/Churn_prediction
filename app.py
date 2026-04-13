@@ -185,24 +185,20 @@ section[data-testid="stSidebar"] label {
 </style>
 """, unsafe_allow_html=True)
 
+
 import joblib
-import xgboost as xgb
+import streamlit as st
 
 @st.cache_resource
 def load_all():
-    # Load model (JSON)
-    model = xgb.Booster()
-    model.load_model("model.json")
-    # Load other artifacts
     artifacts = joblib.load("artifacts.pkl")
+    return artifacts
 
-    return model, artifacts
+artifacts = load_all()
 
-model, artifacts = load_all()
-
+model      = artifacts["model"]
 scaler     = artifacts["scaler"]
 le_dict    = artifacts["le_dict"]
-cat_cols   = artifacts["cat_cols"]
 feat_names = artifacts["feature_names"]
 
 col1, col2 = st.columns([4, 3])
@@ -286,27 +282,37 @@ with tab1:
             "TotalCharges": total
         }
 
-        # Encode
+        # Convert input to DataFrame
+        
         input_df = pd.DataFrame([input_dict])
+
+        # Encode categorical columns safely
         for col in cat_cols:
             if col in input_df.columns:
                 le = le_dict[col]
-                input_df[col] = le.transform(input_df[col])
+                input_df[col] = le.transform(input_df[col].astype(str))
 
-        input_df    = input_df[feat_names]
+        # Ensure correct column order
+        input_df = input_df.reindex(columns=feat_names)
+
+        # Convert everything to numeric (VERY IMPORTANT for Streamlit inputs)
+        input_df = input_df.apply(pd.to_numeric, errors="coerce")
+
+        # Handle missing values (prevents scaler crash)
+        input_df = input_df.fillna(0)
+
+        # Scale
         input_scaled = scaler.transform(input_df)
 
-        dmatrix = xgb.DMatrix(input_scaled)
-        prob = model.predict(dmatrix)[0]
-        pred = model.predict(input_scaled)[0]
+        # Predict (ONLY ONE CORRECT METHOD)
+        prob = model.predict_proba(input_scaled)[0, 1]
+        pred = 1 if prob > 0.5 else 0
 
-        
-
-        # ← Add these two lines
+        # Save session state
         st.session_state["last_customer"] = input_dict
         st.session_state["last_prob"] = prob
+
         st.divider()
-        
 
         # ── Risk Badge ────────────────────────────────────────
         col1, col2, col3 = st.columns(3)
