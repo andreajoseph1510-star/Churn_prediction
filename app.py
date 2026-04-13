@@ -4,7 +4,7 @@ import numpy as np
 import pickle
 
 import matplotlib.pyplot as plt
-plt.use('Agg')
+
 
 from login import show_login_page
 st.set_page_config(
