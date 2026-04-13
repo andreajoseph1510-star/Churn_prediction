@@ -186,12 +186,12 @@ section[data-testid="stSidebar"] label {
 """, unsafe_allow_html=True)
 
 import joblib
-from xgboost import XGBClassifier
+import xgboost as xgb
 
 @st.cache_resource
 def load_all():
     # Load model (JSON)
-    model = XGBClassifier()
+    model = xgb.XGBClassifier()
     model.load_model("model.json")
 
     # Load other artifacts
