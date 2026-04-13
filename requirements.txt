@@ -5,6 +5,6 @@ scikit-learn
 plotly
 firebase-admin
 openai
-xgboost
-matplotlib.pyplot
+xgboost==1.7.6
+matplotlib
 pickle
