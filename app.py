@@ -191,9 +191,8 @@ import xgboost as xgb
 @st.cache_resource
 def load_all():
     # Load model (JSON)
-    model = xgb.XGBClassifier()
+    model = xgb.Booster()
     model.load_model("model.json")
-
     # Load other artifacts
     artifacts = joblib.load("artifacts.pkl")
 
@@ -297,7 +296,8 @@ with tab1:
         input_df    = input_df[feat_names]
         input_scaled = scaler.transform(input_df)
 
-        prob = model.predict_proba(input_scaled)[0][1]
+        dmatrix = xgb.DMatrix(input_scaled)
+        prob = model.predict(dmatrix)[0]
         pred = model.predict(input_scaled)[0]
 
         

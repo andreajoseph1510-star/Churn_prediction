@@ -89,9 +89,12 @@ print("✅ Model saved → churn_model.pkl")
 print("✅ Power BI data exported → powerbi_export.csv")
 from sklearn.metrics import classification_report, roc_auc_score
 
-preds = model.predict(X_test_sc)
-proba = model.predict_proba(X_test_sc)[:,1]
+import xgboost as xgb
 
+dmatrix = xgb.DMatrix(X_test_sc)
+
+proba = model.predict(dmatrix)   
+preds = (proba > 0.5).astype(int)
 print("\n📊 Model Performance on Test Data:")
 print(f"AUC Score : {roc_auc_score(y_test, proba):.4f}")
 print(classification_report(y_test, preds, target_names=["No Churn", "Churn"]))
