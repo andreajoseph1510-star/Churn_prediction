@@ -303,8 +303,9 @@ with tab1:
         input_scaled = scaler.transform(input_df)
 
         # Predict (ONLY ONE CORRECT METHOD)
-        prob = model.predict_proba(input_scaled)[0, 1]
+        prob = model.predict(input_scaled)[0]
         pred = 1 if prob > 0.5 else 0
+        
 
         # Save session state
         st.session_state["last_customer"] = input_dict
