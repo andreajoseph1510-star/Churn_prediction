@@ -7,4 +7,5 @@ firebase-admin
 openai
 xgboost==1.7.6
 matplotlib
+pyrebase4
 
