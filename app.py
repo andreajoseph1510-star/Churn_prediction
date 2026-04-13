@@ -2,9 +2,9 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
-import shap
+
 import matplotlib.pyplot as plt
-from shap.plots._waterfall import waterfall_legacy
+
 from login import show_login_page
 st.set_page_config(
     page_title="SenseChurn",
@@ -40,12 +40,7 @@ if "show_help" not in st.session_state:
 if "show_feedback" not in st.session_state:
     st.session_state.show_feedback = False
 
-# Session state (add once at top if not present)
-if "show_help" not in st.session_state:
-    st.session_state.show_help = False
 
-if "show_feedback" not in st.session_state:
-    st.session_state.show_feedback = False
 
 top_bar = st.container()
 
@@ -56,14 +51,17 @@ with top_bar:
         st.markdown("")
 
     with col_help:
-        st.button("❓", key="help_btn")
+        if st.button("❓", key="help_btn"):
+            st.session_state.show_help = not st.session_state.show_help
 
     with col_feedback:
-        st.button("💬", key="feedback_btn")
+        if st.button("💬", key="feedback_btn"):
+            st.session_state.show_feedback = not st.session_state.show_feedback
 
     with col_logout:
-        st.button("Logout", key="logout_btn")
-
+        if st.button("Logout", key="logout_btn"):
+            st.session_state.clear()
+            st.rerun()
 st.markdown("""
 <style>
 /* Target ONLY the last container (Logout area) */
@@ -394,11 +392,11 @@ with tab1:
             """)
         else:
             st.markdown("""
-            - ✅ Customer is stable — maintain regular engagement
+            -  Customer is stable — maintain regular engagement
             -  Good candidate for upselling premium services
             """)
         
-        # ✅ SAVE for download
+        # Save For download
         st.session_state["done"] = True
         st.session_state["prob"] = prob
 
