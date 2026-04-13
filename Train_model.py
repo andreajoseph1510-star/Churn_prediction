@@ -6,6 +6,8 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 from xgboost import XGBClassifier
 from imblearn.over_sampling import SMOTE
 
+
+
 # ── 1. Load data ──────────────────────────────────────────────
 df = pd.read_csv("telco_churn.csv")
 
@@ -39,6 +41,8 @@ X_train_res, y_train_res = sm.fit_resample(X_train, y_train)
 scaler = StandardScaler()
 X_train_sc = scaler.fit_transform(X_train_res)
 X_test_sc  = scaler.transform(X_test)
+feat_names = X.columns.tolist()
+cat_cols = X.select_dtypes(include="object").columns.tolist()
 
 model = XGBClassifier(
     n_estimators=300,
@@ -63,8 +67,19 @@ artifacts = {
     "cat_cols": cat_cols,
     "feature_names": list(X.columns)
 }
-with open("churn_model.pkl", "wb") as f:
-    pickle.dump(artifacts, f)
+# Save model separately
+model.save_model("model.json")
+
+# Save ONLY non-model artifacts
+import joblib
+joblib.dump({
+    "scaler": scaler,
+    "le_dict": le_dict,
+    "cat_cols": cat_cols,
+    "feature_names": feat_names
+}, "artifacts.pkl")
+
+print("✅ Model + artifacts saved")
 
 # ── 9. Export cleaned data for Power BI ───────────────────────
 df["ChurnLabel"] = df["Churn"].map({1: "Yes", 0: "No"})

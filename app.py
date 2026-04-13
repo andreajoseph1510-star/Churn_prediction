@@ -185,17 +185,25 @@ section[data-testid="stSidebar"] label {
 </style>
 """, unsafe_allow_html=True)
 
-#  Load model 
-@st.cache_resource
-def load_model():
-    with open("churn_model.pkl", "rb") as f:
-        return pickle.load(f)
+import joblib
+from xgboost import XGBClassifier
 
-artifacts = load_model()
-model     = artifacts["model"]
-scaler    = artifacts["scaler"]
-le_dict   = artifacts["le_dict"]
-cat_cols  = artifacts["cat_cols"]
+@st.cache_resource
+def load_all():
+    # Load model (JSON)
+    model = XGBClassifier()
+    model.load_model("model.json")
+
+    # Load other artifacts
+    artifacts = joblib.load("artifacts.pkl")
+
+    return model, artifacts
+
+model, artifacts = load_all()
+
+scaler     = artifacts["scaler"]
+le_dict    = artifacts["le_dict"]
+cat_cols   = artifacts["cat_cols"]
 feat_names = artifacts["feature_names"]
 
 col1, col2 = st.columns([4, 3])
