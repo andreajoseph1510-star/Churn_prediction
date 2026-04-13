@@ -331,6 +331,7 @@ with tab1:
 
         # ── Feature Impact Chart ───────────────────────────────
         st.subheader("🔍 Why did the model predict this?")
+        import shap
 
         explainer    = shap.TreeExplainer(model)
         shap_values  = explainer.shap_values(input_scaled)
