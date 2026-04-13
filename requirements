@@ -6,4 +6,5 @@ plotly
 firebase-admin
 openai
 xgboost
-matplotlib
+matplotlib.pyplot
+pickle
