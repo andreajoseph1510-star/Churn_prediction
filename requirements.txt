@@ -1,7 +1,6 @@
 streamlit
 pandas
 numpy
-scikit-learn
 plotly
 firebase-admin
 openai
@@ -9,3 +8,5 @@ xgboost==1.7.6
 matplotlib
 pyrebase4
 joblib
+scikit-learn==1.3.2
+
