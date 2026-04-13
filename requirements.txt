@@ -1,12 +1,12 @@
-streamlit
-pandas
-numpy
 plotly
 firebase-admin
 openai
-xgboost==1.7.6
 matplotlib
 pyrebase4
-joblib
+streamlit==1.32.0
+pandas==2.2.2
+numpy==1.26.4
 scikit-learn==1.3.2
+xgboost==1.7.6
+joblib==1.3.2
 
