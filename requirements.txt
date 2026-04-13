@@ -6,3 +6,5 @@ xgboost
 joblib
 matplotlib
 plotly
+firebase-admin
+openai
