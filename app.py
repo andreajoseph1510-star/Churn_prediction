@@ -287,11 +287,9 @@ with tab1:
         input_df = pd.DataFrame([input_dict])
 
         # Encode categorical columns safely
-        for col in cat_cols:
+        for col in le_dict.keys():
             if col in input_df.columns:
-                le = le_dict[col]
-                input_df[col] = le.transform(input_df[col].astype(str))
-
+                input_df[col] = le_dict[col].transform(input_df[col].astype(str))
         # Ensure correct column order
         input_df = input_df.reindex(columns=feat_names)
 
