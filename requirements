@@ -6,5 +6,4 @@ plotly
 firebase-admin
 openai
 xgboost
-shap
 matplotlib
