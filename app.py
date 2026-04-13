@@ -329,16 +329,28 @@ with tab1:
 
         st.divider()
 
-        # ── Feature Impact Chart ───────────────────────────────
+       
         st.subheader("🔍 Why did the model predict this?")
+
         import shap
 
-        explainer    = shap.TreeExplainer(model)
-        shap_values  = explainer.shap_values(input_scaled)
+        @st.cache_resource
+        def get_explainer(model):
+            return shap.TreeExplainer(model)
+
+        explainer = get_explainer(model)
+
+        shap_values = explainer.shap_values(input_scaled)
+
+        # handle both SHAP formats safely
+        if isinstance(shap_values, list):
+            shap_vals = shap_values[1][0]  # churn class
+        else:
+            shap_vals = shap_values[0]
 
         impact_df = pd.DataFrame({
             "Feature": feat_names,
-            "Impact": shap_values[0]
+            "Impact": shap_vals
         }).sort_values("Impact", ascending=True)
 
         impact_df["Reason"] = impact_df["Impact"].apply(
