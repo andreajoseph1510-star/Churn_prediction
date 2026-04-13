@@ -335,8 +335,8 @@ with tab1:
         import shap
 
         @st.cache_resource
-        def get_explainer(model):
-            return shap.TreeExplainer(model)
+        def get_explainer(_model):
+             return shap.TreeExplainer(_model)
 
         explainer = get_explainer(model)
 
