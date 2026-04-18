@@ -74,7 +74,7 @@ Get help
 Feedback
 <img width="1826" height="468" alt="Screenshot 2026-04-12 145338" src="https://github.com/user-attachments/assets/574ccf31-f89a-4a84-87b4-85bb425d8ee0" />
 
-
+[![Live App](https://img.shields.io/badge/Live-App-green)](https://huggingface.co/spaces/andrea100/SenseChurn_app)
 Future Improvements:
 
 Improve model accuracy with advanced algorithms
